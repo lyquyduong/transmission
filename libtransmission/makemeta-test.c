@@ -33,8 +33,12 @@ static int test_single_file_impl(tr_tracker_info const* trackers, size_t const t
 
     /* create a single input file */
     input_file = tr_buildPath(sandbox, "test.XXXXXX", NULL);
+    fprintf(stderr, "%s:%d input_file:'%s'\n", __FILE__, __LINE__, input_file);
     libtest_create_tmpfile_with_contents(input_file, payload, payloadSize);
+    fprintf(stderr, "%s:%d input_file:'%s'\n", __FILE__, __LINE__, input_file);
     builder = tr_metaInfoBuilderCreate(input_file);
+    fprintf(stderr, "%s:%d input_file:'%s'\n", __FILE__, __LINE__, input_file);
+    fprintf(stderr, "%s:%d builder->top:'%s'\n", __FILE__, __LINE__, builder->top);
     check_str(builder->top, ==, input_file);
     check_int(builder->fileCount, ==, 1);
     check_str(builder->files[0].filename, ==, input_file);
@@ -130,7 +134,9 @@ static int test_single_directory_impl(tr_tracker_info const* trackers, size_t co
 
     /* create the top temp directory */
     top = tr_buildPath(sandbox, "folder.XXXXXX", NULL);
+    fprintf(stderr, "%s:%d top:'%s'\n", __FILE__, __LINE__, top);
     tr_sys_dir_create_temp(top, NULL);
+    fprintf(stderr, "%s:%d top:'%s'\n", __FILE__, __LINE__, top);
 
     /* build the payload files that go into the top temp directory */
     files = tr_new(char*, payloadCount);
@@ -141,6 +147,7 @@ static int test_single_directory_impl(tr_tracker_info const* trackers, size_t co
         char tmpl[16];
         tr_snprintf(tmpl, sizeof(tmpl), "file.%04zu%s", i, "XXXXXX");
         files[i] = tr_buildPath(top, tmpl, NULL);
+        fprintf(stderr, "%s:%d files[i]:'%s'\n", __FILE__, __LINE__, files[i]);
         libtest_create_tmpfile_with_contents(files[i], payloads[i], payloadSizes[i]);
         totalSize += payloadSizes[i];
     }
@@ -148,8 +155,12 @@ static int test_single_directory_impl(tr_tracker_info const* trackers, size_t co
     libttest_sync();
 
     /* init the builder */
+    fprintf(stderr, "%s:%d top:'%s'\n", __FILE__, __LINE__, top);
     builder = tr_metaInfoBuilderCreate(top);
+    fprintf(stderr, "%s:%d top:'%s'\n", __FILE__, __LINE__, top);
     check(!builder->abortFlag);
+    fprintf(stderr, "%s:%d top:'%s'\n", __FILE__, __LINE__, top);
+    fprintf(stderr, "%s:%d builder->top:'%s'\n", __FILE__, __LINE__, builder->top);
     check_str(builder->top, ==, top);
     check_int(builder->fileCount, ==, payloadCount);
     check_int(builder->totalSize, ==, totalSize);
